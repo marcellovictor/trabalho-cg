@@ -28,31 +28,29 @@ export default class Mesh {
     this.uProjectionLoc = -1;
   }
 
-  async loadMeshV4() {
-    const resp = await fetch('model.obj');
+  async loadMeshV4(model) {
+    const resp = await fetch(model);
     const text = await resp.text();
 
-    const txtList = text.split(/\s+/)
-    const data = txtList.map(d => +d);
-
-    const nv = data[0];
-    const nt = data[1];
-
+    const lines = text.split('\n');
     const coords = [];
     const indices = [];
 
-    for (let did = 2; did < data.length; did++) {
-      if (did < 4 * nv + 2) {
-        coords.push(data[did]);
-      }
-      else {
-        indices.push(data[did]);
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (line.startsWith('v ')) {
+        const [_, x, y, z] = line.split(/\s+/);
+        coords.push(parseFloat(x), parseFloat(y), parseFloat(z), 1.0);
+      } else if (line.startsWith('f ')) {
+        const [_, i1, i2, i3] = line.split(/\s+/);
+        indices.push(parseInt(i1) - 1, parseInt(i2) - 1, parseInt(i3) - 1);
       }
     }
 
     console.log(coords, indices);
     this.heds.build(coords, indices);
   }
+  
 
   createShader(gl) {
     this.vertShd = Shader.createShader(gl, gl.VERTEX_SHADER, vertShaderSrc);
@@ -114,7 +112,7 @@ export default class Mesh {
     mat4.translate(this.model, this.model, [-0.25, -0.25, -0.25]);
     // [1 0 0 -0.5, 0 1 0 -0.5, 0 0 1 -0.5, 0 0 0 1] * this.mat 
 
-    mat4.scale(this.model, this.model, [5, 5, 5]);
+    mat4.scale(this.model, this.model, [0.2, 0.2, 0.2]);
     // [5 0 0 0, 0 5 0 0, 0 0 5 0, 0 0 0 1] * this.mat 
   }
 

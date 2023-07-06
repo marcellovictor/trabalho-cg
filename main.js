@@ -11,15 +11,15 @@ class Scene {
     this.light = new Light();
 
     // Mesh
-    this.mesh = new Mesh( 1.0);
+    this.mesh = new Mesh(0.5);
     this.copy = new Mesh(-1.0);
   }
 
   async init(gl) {
-    await this.mesh.loadMeshV4();
+    await this.mesh.loadMeshV4('bunny.obj');
     this.mesh.init(gl, this.light);
 
-    await this.copy.loadMeshV4()
+    await this.copy.loadMeshV4('armadillo.obj')
     this.copy.init(gl, this.light);
   }
 
