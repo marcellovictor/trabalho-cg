@@ -1,0 +1,11 @@
+version: '3.10'
+
+services:
+  editor:
+    image: nginx
+    container_name: cg-final
+    restart: unless-stopped
+    volumes:
+      - ".:/usr/share/nginx/html"
+    ports:
+      - 8082:80
