@@ -11,24 +11,50 @@ class Scene {
     this.light = new Light();
 
     // Mesh
-    this.mesh = new Mesh(0.5);
-    this.copy = new Mesh(-1.0);
+    this.bunny = new Mesh(0.0);
+    this.armadillo = new Mesh(0.1);
   }
 
   async init(gl) {
-    await this.mesh.loadMeshV4('bunny.obj');
-    this.mesh.init(gl, this.light);
+    await this.bunny.loadMeshV4('bunny.obj');
+    this.bunny.init(gl, this.light);
 
-    await this.copy.loadMeshV4('armadillo.obj')
-    this.copy.init(gl, this.light);
+    await this.armadillo.loadMeshV4('armadillo.obj')
+    this.armadillo.init(gl, this.light);
   }
 
   draw(gl) {  
     this.cam.updateCam();
     this.light.updateLight();
 
-    this.mesh.draw(gl, this.cam, this.light);
-    this.copy.draw(gl, this.cam, this.light);
+    const bunny_commands = [
+      {
+        'type': 'scale',
+        'value': [0.3, 0.3, 0.3]
+      },
+      {
+        'type': 'rotateY',
+        'value': 0.005
+      },
+    ];
+
+    const armadillo_commands = [
+      {
+        'type': 'translate',
+        'value': [1.0, 0.0, 0.0]
+      },
+      {
+        'type': 'scale',
+        'value': [0.1, 0.1, 0.1]
+      },
+      {
+        'type': 'orbitZ',
+        'value': 0.01
+      },
+    ];
+
+    this.bunny.draw(gl, this.cam, this.light, bunny_commands);
+    this.armadillo.draw(gl, this.cam, this.light, armadillo_commands);
   }
 }
 

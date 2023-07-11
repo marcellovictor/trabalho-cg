@@ -10,9 +10,12 @@ export default class Mesh {
     this.heds = new HalfEdgeDS();
 
     // Matriz de modelagem
-    this.angle = 0;
+    this.angleX = 0;
+    this.angleY = 0;
+    this.angleZ = 0;
     this.delta = delta;
     this.model = mat4.create();
+    this.originRotationMatrix = mat4.create();
 
     // Shader program
     this.vertShd = null;
@@ -28,8 +31,8 @@ export default class Mesh {
     this.uProjectionLoc = -1;
   }
 
-  async loadMeshV4(model) {
-    const resp = await fetch(model);
+  async loadMeshV4(filename) {
+    const resp = await fetch(filename);
     const text = await resp.text();
 
     const lines = text.split('\n');
@@ -50,7 +53,7 @@ export default class Mesh {
     console.log(coords, indices);
     this.heds.build(coords, indices);
   }
-  
+
 
   createShader(gl) {
     this.vertShd = Shader.createShader(gl, gl.VERTEX_SHADER, vertShaderSrc);
@@ -80,12 +83,12 @@ export default class Mesh {
     const normalsBuffer = Shader.createBuffer(gl, gl.ARRAY_BUFFER, new Float32Array(vbos[2]));
 
     this.vaoLoc = Shader.createVAO(gl,
-      coordsAttributeLocation, coordsBuffer, 
-      colorsAttributeLocation, colorsBuffer, 
+      coordsAttributeLocation, coordsBuffer,
+      colorsAttributeLocation, colorsBuffer,
       normalsAttributeLocation, normalsBuffer);
 
     this.indicesLoc = Shader.createBuffer(gl, gl.ELEMENT_ARRAY_BUFFER, new Uint32Array(vbos[3]));
-  }  
+  }
 
   init(gl, light) {
     this.createShader(gl);
@@ -95,28 +98,37 @@ export default class Mesh {
     light.createUniforms(gl, this.program);
   }
 
-  updateModelMatrix() {
-    this.angle += 0.005;
-
+  updateModelMatrix(commands) {
     mat4.identity( this.model );
-    mat4.translate(this.model, this.model, [this.delta, 0, 0]);
-    // [1 0 0 delta, 0 1 0 0, 0 0 1 0, 0 0 0 1] * this.mat 
-
-    mat4.rotateY(this.model, this.model, this.angle);
-    // [ cos(this.angle) 0 -sin(this.angle) 0, 
-    //         0         1        0         0, 
-    //   sin(this.angle) 0  cos(this.angle) 0, 
-    //         0         0        0         1]
-    // * this.mat 
-
-    mat4.translate(this.model, this.model, [-0.25, -0.25, -0.25]);
-    // [1 0 0 -0.5, 0 1 0 -0.5, 0 0 1 -0.5, 0 0 0 1] * this.mat 
-
-    mat4.scale(this.model, this.model, [0.2, 0.2, 0.2]);
-    // [5 0 0 0, 0 5 0 0, 0 0 5 0, 0 0 0 1] * this.mat 
+    commands.forEach((cmd) => {
+      switch (cmd.type) {
+        case 'scale':
+          mat4.scale(this.model, this.model, cmd.value);
+          break;
+        case 'translate':
+          mat4.translate(this.model, this.model, cmd.value);
+          break;
+        case 'rotateX':
+          this.angleX += cmd.value;
+          mat4.rotateX(this.model, this.model, this.angleX);
+          break;
+        case 'rotateY':
+          this.angleY += cmd.value;
+          mat4.rotateY(this.model, this.model, this.angleY);
+          break;
+        case 'rotateZ':
+          this.angleZ += cmd.value;
+          mat4.rotateZ(this.model, this.model, this.angleZ);
+          break;
+        case 'orbitZ':
+          mat4.rotateZ(this.originRotationMatrix, this.originRotationMatrix, cmd.value);
+          mat4.multiply(this.model, this.originRotationMatrix, this.model);
+          break;
+      }
+    });
   }
 
-  draw(gl, cam, light) {
+  draw(gl, cam, light, commands) {
     // faces orientadas no sentido anti-horário
     gl.frontFace(gl.CCW);
 
@@ -127,12 +139,12 @@ export default class Mesh {
     gl.useProgram(this.program);
 
     // updates the model transformations
-    this.updateModelMatrix();
+    this.updateModelMatrix(commands);
 
     const model = this.model;
     const view = cam.getView();
     const proj = cam.getProj();
-    
+
     gl.uniformMatrix4fv(this.uModelLoc, false, model);
     gl.uniformMatrix4fv(this.uViewLoc, false, view);
     gl.uniformMatrix4fv(this.uProjectionLoc, false, proj);
