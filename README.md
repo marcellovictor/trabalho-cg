@@ -20,7 +20,7 @@ Armadillo: https://www.prinmath.com/csci5229/OBJ/armadillo.zip
 
 1. OK
 2. OK
-3.
+3. OK
 4.
 5.
 6.
