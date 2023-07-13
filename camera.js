@@ -20,6 +20,12 @@ export default class Camera {
     // Matrizes View e Projection
     this.view = mat4.create();
     this.proj = mat4.create();
+
+    // Parâmetros da órbita
+    this.radius = 2.0;
+    this.theta = 0.0;
+    this.phi = 0.0;
+
   }
 
   getView() {
@@ -31,10 +37,15 @@ export default class Camera {
   }
 
   updateViewMatrix() {
-    mat4.identity( this.view );
+    const eyeX = this.radius * Math.sin(this.phi) * Math.cos(this.theta);
+    const eyeY = this.radius * Math.cos(this.phi);
+    const eyeZ = this.radius * Math.sin(this.phi) * Math.sin(this.theta);
+  
+    this.eye = vec3.fromValues(eyeX, eyeY, eyeZ);
+  
+    mat4.identity(this.view);
     mat4.lookAt(this.view, this.eye, this.at, this.up);
-    // TODO: Tentar implementar as contas diretamente
-  }
+  }  
 
   updateProjectionMatrix(type = '') {
     mat4.identity( this.proj );
@@ -47,6 +58,9 @@ export default class Camera {
   }
 
   updateCam() {
+    this.theta += 0.01;
+    this.phi = Math.PI / 4; // Define um angulo fixo para phi (45 graus ou PI/4 radianos)    
+
     this.updateViewMatrix();
     this.updateProjectionMatrix();
   }
