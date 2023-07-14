@@ -83,6 +83,9 @@ class Main {
     this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
 
+    // Atualiza a posição da luz branca de acordo com a posição da cam.
+    this.scene.light.pos = vec4.fromValues(this.scene.cam.eye[0], this.scene.cam.eye[1], this.scene.cam.eye[2], 1.0);
+
     this.scene.draw(this.gl);
 
     requestAnimationFrame(this.draw.bind(this));
