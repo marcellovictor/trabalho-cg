@@ -128,7 +128,7 @@ export default class Mesh {
     });
   }
 
-  draw(gl, cam, light, commands) {
+  draw(gl, cam, commands) {
     // faces orientadas no sentido anti-horário
     gl.frontFace(gl.CCW);
 

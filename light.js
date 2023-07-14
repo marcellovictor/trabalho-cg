@@ -1,6 +1,6 @@
 export default class Light {
   constructor() {
-    this.pos = vec4.fromValues(2.0, 2.0, 2.0, 1.0);
+    this.pos = vec4.fromValues(0.0, 0.0, 0.0, 1.0);
 
     this.amb_c = vec4.fromValues(1.0, 1.0, 1.0, 1.0);
     this.amb_k = 0.2;
@@ -11,6 +11,12 @@ export default class Light {
     this.esp_c = vec4.fromValues(1.0, 1.0, 1.0, 1.0);
     this.esp_k = 0.4;
     this.esp_p = 5.0;
+
+    // Atributos da luz amarela
+
+    this.fixedLightPos = vec4.fromValues(2.0, 2.0, 2.0, 1.0);
+    this.fixedLightColor = vec4.fromValues(1.0, 1.0, 0.0, 1.0);
+
   }
 
   createUniforms(gl, program){
@@ -33,9 +39,10 @@ export default class Light {
     gl.uniform1f(espKLoc, this.esp_k);
     const espPLoc = gl.getUniformLocation(program, "light_esp_p")
     gl.uniform1f(espPLoc, this.esp_p);
-  }
 
-  updateLight() {
-    // TODO: Change light position
+    this.uFixedLightPosLoc = gl.getUniformLocation(program, "u_fixedLightPos");
+    gl.uniform4fv(this.uFixedLightPosLoc, this.fixedLightPos);
+    this.uFixedLightColorLoc = gl.getUniformLocation(program, "u_fixedLightColor");
+    gl.uniform4fv(this.uFixedLightColorLoc, this.fixedLightColor);
   }
 }

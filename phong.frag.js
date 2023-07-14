@@ -18,6 +18,9 @@ uniform mat4 u_model;
 uniform mat4 u_view;
 uniform mat4 u_projection;
 
+uniform vec4 u_fixedLightPos;
+uniform vec4 u_fixedLightColor;
+
 in vec4 fPosition;
 in vec4 fColor;
 in vec4 fNormal;
@@ -53,5 +56,12 @@ void main()
   float fatorEsp = pow(max(0.0, dot(halfVec, viewNormal)), light_esp_p);
 
   // cor final do vértice
-  minhaColor = 0.25 * fColor + 0.75 * (light_amb_k * light_amb_c + fatorDif * light_dif_k * light_dif_c + fatorEsp * light_esp_k * light_esp_c);
+  minhaColor = 0.25 * fColor + 0.75 * (
+    light_amb_k * light_amb_c +
+    fatorDif * light_dif_k * light_dif_c +
+    fatorEsp * light_esp_k * light_esp_c +
+    light_esp_k * u_fixedLightColor
+  );
+  
 }`
+
