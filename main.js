@@ -99,13 +99,20 @@ window.onload = () => {
 
 function processarVertexBunny() {
   var valorInput = document.getElementById("bunny").value;
-  console.log("O valor do campo de entrada é: " + valorInput);
-  bunny.selectStar(valorInput);
+
+  if (valorInput) {
+    console.log("O valor do campo de entrada é: " + valorInput);
+    bunny.selectStar(valorInput);
+  }
 }
 
 function processarVertexArmadillo() {
   var valorInput = document.getElementById("armadillo").value;
-  console.log("O valor do campo de entrada é: " + valorInput);
+  
+  if (valorInput) {
+    console.log("O valor do campo de entrada é: " + valorInput);
+    armadillo.selectStar(valorInput);
+  }
 }
 
 document.getElementById("btnBunny").addEventListener("click", processarVertexBunny);

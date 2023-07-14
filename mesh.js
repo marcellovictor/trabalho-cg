@@ -80,7 +80,7 @@ export default class Mesh {
       const red = [1.0, 0.0, 0.0, 1.0];
       face.baseHe.vertex.color = red;
       face.baseHe.next.vertex.color = red;
-      face.baseHe.next.next.vertex.color = red;
+      face.baseHe.opposite.vertex.color = red;
     });
   }
 
