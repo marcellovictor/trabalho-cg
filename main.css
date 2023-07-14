@@ -10,3 +10,12 @@ body {
     height: 768;
     background-color: black;
 }
+
+#area3d {
+    order: 1;
+  }
+  
+  #inputs {
+    order: 2;
+    margin-top: 728px;
+  }

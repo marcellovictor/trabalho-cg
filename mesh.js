@@ -2,7 +2,7 @@ import vertShaderSrc from './phong.vert.js';
 import fragShaderSrc from './phong.frag.js';
 
 import Shader from './shader.js';
-import { HalfEdgeDS } from './half-edge.js';
+import { Face, HalfEdge, HalfEdgeDS } from './half-edge.js';
 
 export default class Mesh {
   constructor(delta) {
@@ -50,10 +50,43 @@ export default class Mesh {
       }
     }
 
-    console.log(coords, indices);
+    // console.log(coords, indices);
     this.heds.build(coords, indices);
   }
 
+  selectFaces(vid) {
+
+    let selected = [];
+    let he = this.heds.vertices[vid].he;
+    let h0 = he;
+    selected.push(h0.face);
+
+    let counter = 0;
+    while (he.next.next.opposite != null && he.next.next.opposite != h0) {
+    counter++;
+    console.log("contador: " + counter);
+      he = he.next.next.opposite;
+      selected.push(he.face);
+    }
+    return selected;
+  }
+
+  /**
+   * Pinta as faces selecionadas, pinta de vermelho e adiciona ao final da lista de faces
+   * @param {Face[]} selected 
+   */
+  paintFaces(selected) {
+    selected.forEach((face) => {
+      const red = [1.0, 0.0, 0.0, 1.0];
+      face.baseHe.vertex.color = red;
+      face.baseHe.next.vertex.color = red;
+      face.baseHe.next.next.vertex.color = red;
+    });
+  }
+
+  selectStar(vid) {
+    this.paintFaces(this.selectFaces(vid));
+  }
 
   createShader(gl) {
     this.vertShd = Shader.createShader(gl, gl.VERTEX_SHADER, vertShaderSrc);
