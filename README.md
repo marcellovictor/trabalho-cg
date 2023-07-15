@@ -18,5 +18,5 @@ Armadillo: https://www.prinmath.com/csci5229/OBJ/armadillo.zip
 2. OK
 3. OK
 4.
-5.
+5. OK
 6.

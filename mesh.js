@@ -96,10 +96,6 @@ export default class Mesh {
     return selected;
   }
 
-  // selectStar(vid) {
-  //   this.clone(this.selectFaces(vid));
-  // }
-
   createShader(gl) {
     this.vertShd = Shader.createShader(gl, gl.VERTEX_SHADER, vertShaderSrc);
     this.fragShd = Shader.createShader(gl, gl.FRAGMENT_SHADER, fragShaderSrc);
