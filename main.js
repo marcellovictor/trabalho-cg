@@ -12,7 +12,9 @@ class Scene {
 
     // Mesh
     this.bunny = new Mesh(0.0);
+    this.bunnyStar = null;
     this.armadillo = new Mesh(0.0);
+    this.isStarSelected = false;
   }
 
   async init(gl) {
@@ -55,6 +57,10 @@ class Scene {
 
     this.bunny.draw(gl, this.cam, this.light, bunny_commands);
     this.armadillo.draw(gl, this.cam, this.light, armadillo_commands);
+
+    if (this.isStarSelected) {
+      this.bunnyStar.draw(gl, this.cam, this.light, bunny_commands);
+    }
   }
 }
 
@@ -102,13 +108,16 @@ function processarVertexBunny() {
 
   if (valorInput) {
     console.log("O valor do campo de entrada é: " + valorInput);
-    bunny.selectStar(valorInput);
+    this.isStarSelected = true;
+    let faces = bunny.selectFaces(valorInput);
+    this.bunnyStar = new Mesh(0.0);
+    this.bunnyStar.clone(faces);
   }
 }
 
 function processarVertexArmadillo() {
   var valorInput = document.getElementById("armadillo").value;
-  
+
   if (valorInput) {
     console.log("O valor do campo de entrada é: " + valorInput);
     armadillo.selectStar(valorInput);

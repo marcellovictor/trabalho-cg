@@ -51,7 +51,32 @@ export default class Mesh {
     }
 
     // console.log(coords, indices);
-    this.heds.build(coords, indices);
+    this.heds.build(coords, indices, [0.0, 1.0, 0.0, 1.0]);
+  }
+
+  /** Recebe um vetor de faces e prepara um vetor de indices e coordenadas para serem buildados
+   * @param {Face[]} faces 
+   */
+  clone(faces){
+
+    const coords = [];
+    const indices = [];
+
+    for (let i = 0; i < faces.length; i++) {
+      const face = faces[i];
+      const he = face.baseHe;
+      const v1 = he.vertex;
+      const v2 = he.next.vertex;
+      const v3 = he.opposite.vertex;
+
+      coords.push(v1.x, v1.y, v1.z, 1.0);
+      coords.push(v2.x, v2.y, v2.z, 1.0);
+      coords.push(v3.x, v3.y, v3.z, 1.0);
+
+      indices.push(i*3, i*3+1, i*3+2);
+    }
+
+    this.heds.build(coords, indices,  [1.0, 0.0, 0.0, 1.0]);
   }
 
   selectFaces(vid) {
@@ -71,22 +96,9 @@ export default class Mesh {
     return selected;
   }
 
-  /**
-   * Pinta as faces selecionadas, pinta de vermelho e adiciona ao final da lista de faces
-   * @param {Face[]} selected 
-   */
-  paintFaces(selected) {
-    selected.forEach((face) => {
-      const red = [1.0, 0.0, 0.0, 1.0];
-      face.baseHe.vertex.color = red;
-      face.baseHe.next.vertex.color = red;
-      face.baseHe.opposite.vertex.color = red;
-    });
-  }
-
-  selectStar(vid) {
-    this.paintFaces(this.selectFaces(vid));
-  }
+  // selectStar(vid) {
+  //   this.clone(this.selectFaces(vid));
+  // }
 
   createShader(gl) {
     this.vertShd = Shader.createShader(gl, gl.VERTEX_SHADER, vertShaderSrc);
