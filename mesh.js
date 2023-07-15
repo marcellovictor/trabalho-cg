@@ -51,7 +51,7 @@ export default class Mesh {
     }
 
     // console.log(coords, indices);
-    this.heds.build(coords, indices, [0.0, 1.0, 0.0, 1.0]);
+    this.heds.build(coords, indices, [1.0, 1.0, 1.0, 1.0]);
   }
 
   /** Recebe um vetor de faces e prepara um vetor de indices e coordenadas para serem buildados
