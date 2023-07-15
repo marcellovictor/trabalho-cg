@@ -12,7 +12,11 @@ class Scene {
 
     // Mesh
     this.bunny = new Mesh(0.0);
-    this.armadillo = new Mesh(0.1);
+    this.bunnyStar = null;
+    this.armadillo = new Mesh(0.0);
+    this.armadilloStar = null;
+    this.isBunnyStarSelected = false;
+    this.isArmadilloStarSelected = false;
   }
 
   async init(gl) {
@@ -23,7 +27,7 @@ class Scene {
     this.armadillo.init(gl, this.light);
   }
 
-  draw(gl) {  
+  draw(gl) {
     this.cam.updateCam();
 
     const bunny_commands = [
@@ -54,6 +58,14 @@ class Scene {
 
     this.bunny.draw(gl, this.cam, bunny_commands);
     this.armadillo.draw(gl, this.cam, armadillo_commands);
+
+    if (this.isBunnyStarSelected) {
+      this.bunnyStar.draw(gl, this.cam, bunny_commands);
+    }
+    if (this.isArmadilloStarSelected) {
+      this.armadilloStar.draw(gl, this.cam, armadillo_commands);
+    }
+
   }
 }
 
@@ -91,9 +103,43 @@ class Main {
   }
 }
 
+const app = new Main();
+const bunny = app.scene.bunny;
+const armadillo = app.scene.armadillo;
+
 window.onload = () => {
-  const app = new Main();
   app.draw();
 }
 
+function processarVertexBunny() {
+  var valorInput = document.getElementById("bunny").value;
 
+  if (valorInput) {
+    console.log("O valor do campo de entrada é: " + valorInput);
+    this.isBunnyStarSelected = true;
+    let faces = bunny.selectFaces(valorInput);
+    this.bunnyStar = new Mesh(0.0);
+    this.bunnyStar.clone(faces);
+  }
+  else {
+    this.isBunnyStarSelected = false;
+  }
+}
+
+function processarVertexArmadillo() {
+  var valorInput = document.getElementById("armadillo").value;
+
+  if (valorInput) {
+    console.log("O valor do campo de entrada é: " + valorInput);
+    this.isArmadilloStarSelected = true;
+    let faces = armadillo.selectFaces(valorInput);
+    this.armadilloStar = new Mesh(0.0);
+    this.armadilloStar.clone(faces);
+  }
+  else {
+    this.isArmadilloStarSelected = false;
+  }
+}
+
+document.getElementById("btnBunny").addEventListener("click", processarVertexBunny);
+document.getElementById("btnArmadillo").addEventListener("click", processarVertexArmadillo);

@@ -2,7 +2,7 @@ import vertShaderSrc from './phong.vert.js';
 import fragShaderSrc from './phong.frag.js';
 
 import Shader from './shader.js';
-import { HalfEdgeDS } from './half-edge.js';
+import { Face, HalfEdge, HalfEdgeDS } from './half-edge.js';
 
 export default class Mesh {
   constructor(delta) {
@@ -50,10 +50,55 @@ export default class Mesh {
       }
     }
 
-    console.log(coords, indices);
-    this.heds.build(coords, indices);
+    // console.log(coords, indices);
+    this.heds.build(coords, indices, [0.0, 1.0, 0.0, 1.0]);
   }
 
+  /** Recebe um vetor de faces e prepara um vetor de indices e coordenadas para serem buildados
+   * @param {Face[]} faces 
+   */
+  clone(faces){
+
+    const coords = [];
+    const indices = [];
+
+    for (let i = 0; i < faces.length; i++) {
+      const face = faces[i];
+      const he = face.baseHe;
+      const v1 = he.vertex;
+      const v2 = he.next.vertex;
+      const v3 = he.opposite.vertex;
+
+      coords.push(v1.x, v1.y, v1.z, 1.0);
+      coords.push(v2.x, v2.y, v2.z, 1.0);
+      coords.push(v3.x, v3.y, v3.z, 1.0);
+
+      indices.push(i*3, i*3+1, i*3+2);
+    }
+
+    this.heds.build(coords, indices,  [1.0, 0.0, 0.0, 1.0]);
+  }
+
+  selectFaces(vid) {
+
+    let selected = [];
+    let he = this.heds.vertices[vid].he;
+    let h0 = he;
+    selected.push(h0.face);
+
+    let counter = 0;
+    while (he.next.next.opposite != null && he.next.next.opposite != h0) {
+    counter++;
+    console.log("contador: " + counter);
+      he = he.next.next.opposite;
+      selected.push(he.face);
+    }
+    return selected;
+  }
+
+  // selectStar(vid) {
+  //   this.clone(this.selectFaces(vid));
+  // }
 
   createShader(gl) {
     this.vertShd = Shader.createShader(gl, gl.VERTEX_SHADER, vertShaderSrc);
