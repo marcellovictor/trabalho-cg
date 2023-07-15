@@ -14,7 +14,9 @@ class Scene {
     this.bunny = new Mesh(0.0);
     this.bunnyStar = null;
     this.armadillo = new Mesh(0.0);
-    this.isStarSelected = false;
+    this.armadilloStar = null;
+    this.isBunnyStarSelected = false;
+    this.isArmadilloStarSelected = false;
   }
 
   async init(gl) {
@@ -58,9 +60,13 @@ class Scene {
     this.bunny.draw(gl, this.cam, this.light, bunny_commands);
     this.armadillo.draw(gl, this.cam, this.light, armadillo_commands);
 
-    if (this.isStarSelected) {
+    if (this.isBunnyStarSelected) {
       this.bunnyStar.draw(gl, this.cam, this.light, bunny_commands);
     }
+    if (this.isArmadilloStarSelected) {
+      this.armadilloStar.draw(gl, this.cam, this.light, armadillo_commands);
+    }
+
   }
 }
 
@@ -108,10 +114,13 @@ function processarVertexBunny() {
 
   if (valorInput) {
     console.log("O valor do campo de entrada é: " + valorInput);
-    this.isStarSelected = true;
+    this.isBunnyStarSelected = true;
     let faces = bunny.selectFaces(valorInput);
     this.bunnyStar = new Mesh(0.0);
     this.bunnyStar.clone(faces);
+  }
+  else {
+    this.isBunnyStarSelected = false;
   }
 }
 
@@ -120,7 +129,13 @@ function processarVertexArmadillo() {
 
   if (valorInput) {
     console.log("O valor do campo de entrada é: " + valorInput);
-    armadillo.selectStar(valorInput);
+    this.isArmadilloStarSelected = true;
+    let faces = armadillo.selectFaces(valorInput);
+    this.armadilloStar = new Mesh(0.0);
+    this.armadilloStar.clone(faces);
+  }
+  else {
+    this.isArmadilloStarSelected = false;
   }
 }
 
